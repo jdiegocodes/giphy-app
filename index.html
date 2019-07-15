@@ -35,6 +35,78 @@
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <script>
+      // get input value from user
+        // make api call with user input
+        // spit data back out on page
+
+        const app = {};
+        app.key = "IW8VvQKtjS7RC1Gk8RVzrZ1r05MPWOGH";
+
+        app.displayGifs = (gifs) => {
+            console.log("In display gifs:",gifs);
+            // loop over
+            gifs.forEach(function(gif) {
+                console.log("Inside of foreach: ",gif.title);
+                console.log("Gif image: ", gif.images.original_still.url);
+
+                const gifHtml =  `
+                        <div class="gif-box">
+                            <div class="img-box">
+                                <img src="${gif.images.original_still.url}" alt="">
+                            </div>
+                            <p class="gif-title">${gif.title}</p>
+                        </div>
+                        `
+                
+                console.log(gifHtml);
+                $(`.results`).append(gifHtml);
+
+
+            });
+        };
+        // Listen for form submit
+        app.init= () => {
+            console.log("app initialized....")
+            // get input value from user
+            $(`form`).on(`submit`, function(e){
+                e.preventDefault();
+                // empty out results container
+                $(`.results`).empty();
+                console.log("Form Submitted");
+                // get input value from user
+                const userInput = $(`input[type="text"]`).val()
+                console.log(userInput);
+                app.getGifs(userInput);
+            });
+        }
+
+        app.getGifs = (query) => {
+            console.log("Getting gifs...")
+            $.ajax({
+                url: "https://api.giphy.com/v1/gifs/search",
+                method: "GET",
+                dataType: "json",
+                data: {
+                    api_key: app.key,
+                    q: query
+                }
+            }).then(res => {
+                console.log("result of getGifs",res.data);
+                const gifArray = res.data;
+                // once we have gifs, display gis to page
+                app.displayGifs(gifArray);
+            });
+        };
+
+
+        // Document Ready
+        $(() => {
+            console.log("Document Ready");
+            // Initialize App
+            app.init();
+
+
+        });
     </script>
 </body>
 </html>
